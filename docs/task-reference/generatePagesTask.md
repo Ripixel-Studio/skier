@@ -48,6 +48,7 @@ generatePagesTask({
 | `outDir` | string | ✅ | Output directory |
 | `pageExt` | string | | Template extension (default: `.html`) |
 | `additionalVarsFn` | function | | Inject extra variables per page (receives `HtmlRenderVars` object) |
+| `helpers` | object | | Custom Handlebars helpers, keyed by name (e.g. `{ eq: (a, b) => a === b }`) |
 
 ---
 
@@ -128,6 +129,28 @@ generatePagesTask({
 
 ---
 
+## Custom Helpers
+
+Register helpers on this task's isolated Handlebars environment:
+
+```js
+generatePagesTask({
+  pagesDir: 'src/pages',
+  partialsDir: 'src/partials',
+  outDir: 'public',
+  helpers: {
+    eq: (a, b) => a === b,
+    upper: (s) => String(s).toUpperCase(),
+  },
+})
+```
+
+```handlebars
+{{#if (eq currentPage "index")}}<h1>{{upper siteTitle}}</h1>{{/if}}
+```
+
+---
+
 ## Real-World Example
 
 Homepage with dynamic sections:
@@ -175,5 +198,6 @@ generatePagesTask({
 ## Related Tasks
 
 - [generateItemsTask](./generateItemsTask.md) — For collection pages
+- [generateDataPagesTask](./generateDataPagesTask.md) — For a page per item of a data array
 - [setGlobalsTask](./setGlobalsTask.md) — Set variables used in templates
 - [copyStaticTask](./copyStaticTask.md) — For non-template assets

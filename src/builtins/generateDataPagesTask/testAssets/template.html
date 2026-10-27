@@ -1,0 +1,12 @@
+<html>
+  <head>
+    <title>{{name}} | {{siteTitle}}</title>
+  </head>
+  <body>
+    {{> header}}
+    <h1>{{name}}</h1>
+    {{#if (eq kind "tool")}}
+    <p class="tool">a tool</p>
+    {{/if}}
+  </body>
+</html>

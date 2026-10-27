@@ -86,17 +86,17 @@ describe('generateFeedTask', () => {
     const task = generateFeedTask(config);
     const result = await task.run(config, ctx);
     // Check that output files exist
-    expect(await fs.pathExists(result.rssPath)).toBe(true);
-    expect(await fs.pathExists(result.atomPath)).toBe(true);
-    expect(await fs.pathExists(result.jsonPath)).toBe(true);
+    expect(await fs.pathExists(result.rssPath!)).toBe(true);
+    expect(await fs.pathExists(result.atomPath!)).toBe(true);
+    expect(await fs.pathExists(result.jsonPath!)).toBe(true);
     // Optionally, check that contents include expected strings
-    const rss = await fs.readFile(result.rssPath, 'utf8');
+    const rss = await fs.readFile(result.rssPath!, 'utf8');
     expect(rss).toContain('<rss');
     expect(rss).toContain('Test Post');
-    const atom = await fs.readFile(result.atomPath, 'utf8');
+    const atom = await fs.readFile(result.atomPath!, 'utf8');
     expect(atom).toContain('<feed');
     expect(atom).toContain('Test Post');
-    const json = await fs.readFile(result.jsonPath, 'utf8');
+    const json = await fs.readFile(result.jsonPath!, 'utf8');
     expect(json).toContain('Test Post');
     expect(json).toContain('feed');
   });

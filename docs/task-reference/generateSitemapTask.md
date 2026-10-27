@@ -44,6 +44,7 @@ generateSitemapTask({
 | `outDir` | string | ✅ | Directory to write `sitemap.xml` into |
 | `siteUrl` | string | | Site root URL for absolute `<loc>` tags |
 | `excludes` | string[] | | Glob patterns to exclude (merged with defaults) |
+| `trailingSlash` | boolean | | `false` lists `foo/index.html` as `/foo` instead of `/foo/` (default `true`) |
 
 ---
 
@@ -69,6 +70,19 @@ All URLs are automatically cleaned for best SEO practice:
 | `contact.html` | `/contact` |
 
 No `.html` extensions appear in the generated sitemap.
+
+If your host serves directory pages without a trailing slash (and redirects `/blog/` to `/blog`, e.g. Firebase Hosting with `trailingSlash: false`), set `trailingSlash: false` so the sitemap does not list URLs that redirect:
+
+```js
+generateSitemapTask({
+  scanDir: 'public',
+  outDir: 'public',
+  siteUrl: 'https://example.com',
+  trailingSlash: false, // blog/index.html → /blog
+})
+```
+
+The site root is always `/`.
 
 ---
 
