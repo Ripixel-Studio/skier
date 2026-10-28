@@ -3,9 +3,14 @@ export { copyStaticTask, CopyStaticConfig } from './copyStaticTask/index.js';
 export { bundleCssTask, BundleCssConfig } from './bundleCssTask/index.js';
 export { generateSitemapTask, GenerateSitemapConfig } from './generateSitemapTask/index.js';
 export { generatePagesTask, GeneratePagesConfig } from './generatePagesTask/index.js';
+export {
+  generateDataPagesTask,
+  GenerateDataPagesConfig,
+  safeRelativeOutPath,
+} from './generateDataPagesTask/index.js';
 export { generateItemsTask, GenerateItemsConfig } from './generateItemsTask/index.js';
 export { prepareOutputTask, PrepareOutputConfig } from './prepareOutputTask/index.js';
-export { generateFeedTask, GenerateFeedConfig } from './generateFeedTask/index.js';
+export { generateFeedTask, GenerateFeedConfig, FeedArticle } from './generateFeedTask/index.js';
 export {
   setGlobalFromMarkdownTask,
   SetGlobalFromMarkdownConfig,

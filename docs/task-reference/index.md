@@ -22,7 +22,7 @@ flowchart LR
 | Category | Tasks | Purpose |
 |----------|-------|---------|
 | **Setup** | `prepareOutputTask`, `setGlobalsTask`, `setGlobalFromMarkdownTask` | Initialize directories and shared data |
-| **Content** | `generateItemsTask`, `generatePaginatedItemsTask`, `generatePagesTask` | Process and render content |
+| **Content** | `generateItemsTask`, `generatePaginatedItemsTask`, `generatePagesTask`, `generateDataPagesTask` | Process and render content |
 | **Feeds** | `generateFeedTask`, `generateSitemapTask` | Create discovery/syndication files |
 | **Assets** | `bundleCssTask`, `copyStaticTask` | Optimize and copy static files |
 
@@ -48,6 +48,7 @@ flowchart TD
     Pages -->|Standalone templates| generatePagesTask
     Pages -->|From Markdown collection| generateItemsTask
     Pages -->|Paginated list| generatePaginatedItemsTask
+    Pages -->|One per data item| generateDataPagesTask
 
     Start --> Syndication{Syndication?}
     Syndication -->|RSS/Atom/JSON| generateFeedTask
@@ -73,6 +74,7 @@ flowchart TD
 | [generatePagesTask](./generatePagesTask.md) | Render standalone page templates |
 | [generateItemsTask](./generateItemsTask.md) | Generate pages from Markdown collections |
 | [generatePaginatedItemsTask](./generatePaginatedItemsTask.md) | Create paginated list pages |
+| [generateDataPagesTask](./generateDataPagesTask.md) | Generate a page per item of a data array |
 
 ### Feed Tasks
 

@@ -16,6 +16,13 @@ export interface GenerateSitemapConfig {
   siteUrl?: string;
   /** (Optional) glob patterns to exclude from sitemap. Merged with defaults (404.html, 404/**). */
   excludes?: string[];
+  /**
+   * (Optional) whether directory pages (`foo/index.html`) are listed with a
+   * trailing slash (`/foo/`, the default) or without one (`/foo`). Set `false`
+   * for hosts that serve slash-less URLs (e.g. Firebase `trailingSlash: false`),
+   * so the sitemap does not list URLs that redirect. The site root is always `/`.
+   */
+  trailingSlash?: boolean;
 }
 // #endregion config
 
@@ -45,10 +52,10 @@ function matchesGlob(relPath: string, pattern: string): boolean {
 /**
  * Clean a relative HTML path into a sitemap-friendly URL.
  * - `index.html` → `/`
- * - `foo/index.html` → `/foo/`
+ * - `foo/index.html` → `/foo/` (or `/foo` with `trailingSlash: false`)
  * - `about.html` → `/about`
  */
-function cleanUrl(relPath: string): string {
+function cleanUrl(relPath: string, trailingSlash = true): string {
   let url = '/' + relPath.replace(/^\/+/, '');
 
   // Handle index.html → directory root
@@ -56,7 +63,7 @@ function cleanUrl(relPath: string): string {
     return '/';
   }
   if (url.endsWith('/index.html')) {
-    return url.slice(0, -'index.html'.length);
+    return url.slice(0, -(trailingSlash ? 'index.html' : '/index.html').length);
   }
 
   // Strip .html extension
@@ -114,7 +121,7 @@ export function generateSitemapTask(
 
         const sitemapEntries = includedFiles
           .map((relPath) => {
-            const url = cleanUrl(relPath);
+            const url = cleanUrl(relPath, cfg.trailingSlash !== false);
             const loc = cfg.siteUrl ? `${cfg.siteUrl.replace(/\/$/, '')}${url}` : url;
             return `<url><loc>${loc}</loc></url>`;
           })

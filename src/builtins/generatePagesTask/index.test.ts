@@ -48,5 +48,26 @@ describe('generatePagesTask', () => {
     }
   });
 
-  // Additional tests for custom config, error handling, etc. can be added here
+  it('registers custom helpers on its environment', async () => {
+    const helperPagesDir = path.join(testOutDir, 'helper-pages');
+    await fs.ensureDir(helperPagesDir);
+    await fs.writeFile(
+      path.join(helperPagesDir, 'shout.html'),
+      '<p>{{shout name}}</p>{{#if (eq name "skier")}}<b>match</b>{{/if}}',
+    );
+    const config: GeneratePagesConfig = {
+      pagesDir: helperPagesDir,
+      partialsDir,
+      outDir: path.join(testOutDir, 'helpers'),
+      additionalVarsFn: () => ({ name: 'skier' }),
+      helpers: {
+        shout: (s: unknown) => String(s).toUpperCase(),
+        eq: (a: unknown, b: unknown) => a === b,
+      },
+    };
+    const task = generatePagesTask(config);
+    await task.run(config, ctx);
+    const out = await fs.readFile(path.join(testOutDir, 'helpers', 'shout.html'), 'utf8');
+    expect(out).toBe('<p>SKIER</p><b>match</b>');
+  });
 });

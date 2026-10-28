@@ -120,4 +120,24 @@ describe('generateSitemapTask', () => {
     expect(actual).toContain('https://example.com/contact');
     expect(actual).not.toContain('contact.html');
   });
+
+  it('lists directory pages slash-less with trailingSlash: false', async () => {
+    const ctx = createCtx();
+    const config: GenerateSitemapConfig = {
+      scanDir: testInputDir,
+      outDir: testOutDir,
+      siteUrl: 'https://example.com/',
+      trailingSlash: false,
+    };
+    const task = generateSitemapTask(config);
+    await task.run(config, ctx);
+    const actual = await fs.readFile(path.join(testOutDir, 'sitemap.xml'), 'utf8');
+    // The root stays `/`
+    expect(actual).toContain('<loc>https://example.com/</loc>');
+    // blog/index.html → /blog
+    expect(actual).toContain('<loc>https://example.com/blog</loc>');
+    expect(actual).not.toContain('https://example.com/blog/');
+    expect(actual).toContain('<loc>https://example.com/admin</loc>');
+    expect(actual).toContain('<loc>https://example.com/about</loc>');
+  });
 });

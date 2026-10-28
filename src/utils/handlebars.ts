@@ -90,21 +90,39 @@ export function registerSafeEachHelper(handlebars: typeof Handlebars, logger: Lo
 }
 
 /**
+ * Custom Handlebars helpers a task registers on its isolated environment,
+ * keyed by helper name (e.g. `{ eq: (a, b) => a === b }`).
+ */
+export type HandlebarsHelpers = Record<string, Handlebars.HelperDelegate>;
+
+/**
+ * Registers custom helpers into a Handlebars environment.
+ */
+export function registerHelpers(handlebars: typeof Handlebars, helpers?: HandlebarsHelpers): void {
+  for (const [name, fn] of Object.entries(helpers ?? {})) {
+    handlebars.registerHelper(name, fn);
+  }
+}
+
+/**
  * Sets up a fully configured Handlebars environment with:
  * - Partials registered from a directory
  * - Missing variable warnings
  * - Safe #each helper
+ * - Any custom helpers passed in
  */
 export async function setupHandlebarsEnvironment(
   partialsDir: string,
   logger: Logger,
   partialExtensions: string[] = ['.hbs', '.html'],
+  helpers?: HandlebarsHelpers,
 ): Promise<typeof Handlebars> {
   const handlebars = createHandlebarsEnvironment();
 
   await registerPartials(handlebars, partialsDir, partialExtensions);
   registerMissingVariableWarning(handlebars, logger);
   registerSafeEachHelper(handlebars, logger);
+  registerHelpers(handlebars, helpers);
 
   return handlebars;
 }

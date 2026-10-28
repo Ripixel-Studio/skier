@@ -48,6 +48,7 @@ generateFeedTask({
 | `articles` | string/array | ✅ | Items array or `${varName}` reference |
 | `outDir` | string | ✅ | Output directory |
 | `site` | object | ✅ | Feed metadata (see below) |
+| `outputs` | object | | Which formats to write and where, relative to `outDir` (default: all three, see below) |
 
 ### Site Metadata
 
@@ -69,8 +70,29 @@ generateFeedTask({
     json: 'https://example.com/json.json',
     atom: 'https://example.com/atom.xml',
   },
+
+  // Optional
+  updated: new Date(),               // Feed-level <updated> (default: build time)
+  generator: 'my-site',              // Feed <generator> (default: the feed library's; false omits it)
 }
 ```
+
+Only `title`, `id` and `link` are required.
+
+### Outputs
+
+By default the task writes `rss.xml`, `atom.xml` and `json.json` into `outDir`. Pass `outputs` to choose formats and paths — only the listed formats are written:
+
+```js
+generateFeedTask({
+  articles: '${events}',
+  outDir: 'public',
+  outputs: { atom: 'events/feed.xml' },  // just Atom, at /events/feed.xml
+  site: { /* ... */ },
+})
+```
+
+Two feeds in one pipeline (say a blog feed and an events feed) are two `generateFeedTask`s with different `outputs`.
 
 ---
 
@@ -90,17 +112,20 @@ Each article needs these fields:
 
 ```js
 {
-  title: 'Post Title',           // Required
-  link: '/posts/my-post/',       // Required (relative or absolute)
-  body: '<p>HTML content</p>',   // Required (for feed content)
-  dateObj: new Date('2024-01-15'), // Required (Date object)
+  title: 'Post Title',             // Required (HTML: escape &, < in plain text)
+  link: '/posts/my-post/',         // Required (relative links are resolved against site.link)
+  dateObj: new Date('2024-01-15'), // Required (Date object) — the entry's <updated>
+  body: '<p>HTML content</p>',     // Feed content; body or excerpt is required
+  excerpt: 'Short summary',        // Summary; falls back to body
 
   // Optional
-  excerpt: 'Short summary',    // Used as feed description fallback
-  author: 'Jane Doe',
-  image: 'https://example.com/image.jpg',
+  id: 'https://example.com/posts/my-post', // Entry id (default: link; resolved like link)
+  publishedObj: new Date('2024-01-10'),    // <published>; entries sort by it when set, else dateObj
+  categories: [{ term: 'news', name: 'News' }],
 }
 ```
+
+Items from `generateItemsTask` already have this shape. Data from elsewhere (an API, a custom task) needs only `title`, `link`, `dateObj` and `body` or `excerpt`.
 
 ---
 

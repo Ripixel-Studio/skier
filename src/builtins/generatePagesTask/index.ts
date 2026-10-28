@@ -4,7 +4,7 @@ import { marked } from 'marked';
 import hljs from 'highlight.js';
 import type { TaskDef } from '../../types.js';
 import { validateRequiredConfig } from '../../utils/errors.js';
-import { setupHandlebarsEnvironment } from '../../utils/handlebars.js';
+import { setupHandlebarsEnvironment, type HandlebarsHelpers } from '../../utils/handlebars.js';
 
 const renderer = new marked.Renderer();
 renderer.code = (code, infostring) => {
@@ -45,6 +45,11 @@ export interface GeneratePagesConfig {
   additionalVarsFn?: (
     args: HtmlRenderVars,
   ) => Record<string, unknown> | Promise<Record<string, unknown>>;
+  /**
+   * Optional custom Handlebars helpers, keyed by name (e.g. `{ eq: (a, b) => a === b }`).
+   * Registered on this task's isolated environment only.
+   */
+  helpers?: HandlebarsHelpers;
 }
 // #endregion config
 
@@ -64,7 +69,12 @@ export function generatePagesTask(
       validateRequiredConfig(ctx, 'generate-pages', cfg, ['pagesDir', 'partialsDir', 'outDir']);
 
       // Create isolated Handlebars environment
-      const handlebars = await setupHandlebarsEnvironment(cfg.partialsDir, ctx.logger);
+      const handlebars = await setupHandlebarsEnvironment(
+        cfg.partialsDir,
+        ctx.logger,
+        undefined,
+        cfg.helpers,
+      );
 
       await ensureDir(cfg.outDir);
       const pageExt = cfg.pageExt || '.html';

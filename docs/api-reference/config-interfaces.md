@@ -77,6 +77,12 @@ For [`generatePaginatedItemsTask`](../task-reference/generatePaginatedItemsTask.
 
 @include src/builtins/generatePaginatedItemsTask/index.ts region="config"
 
+### GenerateDataPagesConfig
+
+For [`generateDataPagesTask`](../task-reference/generateDataPagesTask.md):
+
+@include src/builtins/generateDataPagesTask/index.ts region="config"
+
 ---
 
 ## Feeds & SEO
